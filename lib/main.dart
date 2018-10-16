@@ -31,7 +31,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _buildBody(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection('users').snapshots(),
+      stream: Firestore.instance.collection('cars').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
 
@@ -48,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
-    final record = Record.fromSnapshot(data);
+    final record = Car.fromSnapshot(data);
 
     return Padding(
       key: ValueKey(record.toString()),
@@ -83,4 +83,43 @@ class Record {
 
   @override
   String toString() => "$firstName $lastName";
+}
+
+class Driver {
+  final String firstName;
+  final String lastName;
+  final DocumentReference reference;
+
+  Driver.fromMap(Map<String, dynamic> map, {this.reference})
+      : assert(map['firstName'] != null),
+        assert(map['lastName'] != null),
+        firstName = map['firstName'],
+        lastName = map['lastName'];
+
+  Driver.fromSnapshot(DocumentSnapshot snapshot)
+      : this.fromMap(snapshot.data, reference: snapshot.reference);
+
+  @override
+  String toString() => "$firstName $lastName";
+}
+
+class Car {
+  final String make;
+  final String model;
+  final year;
+  final DocumentReference reference;
+
+  Car.fromMap(Map<String, dynamic> map, {this.reference})
+      : assert(map['make'] != null),
+        assert(map['model'] != null),
+        assert(map['year'] != null),
+        make = map['make'],
+        model = map['model'],
+        year = map['year'];
+
+  Car.fromSnapshot(DocumentSnapshot snapshot)
+      : this.fromMap(snapshot.data, reference: snapshot.reference);
+
+  @override
+  String toString() => "$year $make $model";
 }
